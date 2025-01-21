@@ -26,6 +26,7 @@ COPY robosearch/ robosearch/
 ENV PYTHONPATH=/app
 ENV TF_CPP_MIN_LOG_LEVEL=3
 ENV PORT=8000
+ENV API_TOKEN=${API_TOKEN}
 
 # Create non-root user
 RUN useradd -m appuser && chown -R appuser:appuser /app

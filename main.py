@@ -1,10 +1,28 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends, HTTPException
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
 from typing import List
+import os
 from robosearch.robots.rct_robot import RCTRobot
 
-app = FastAPI()
+app = FastAPI(
+    title="RoboSearch API",
+    description="API for RoboSearch",
+    version="0.1.0"
+)
 rct_clf = RCTRobot()
+security = HTTPBearer()
+
+# Function to verify token
+async def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    token = os.environ.get("API_TOKEN")
+    if not token or credentials.credentials != token:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid authentication token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return credentials.credentials
 
 class PredictItem(BaseModel):
     title: str
@@ -14,20 +32,16 @@ class PredictItem(BaseModel):
     use_ptyp: bool
 
 class PredictRequest(BaseModel):
-    items: List[PredictItem]
+    citations: List[PredictItem]
 
 @app.get("/")
 def read_root():
-    return {"Hello": "World"}
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: str | None):
-    return {"item_id": item_id, "q": q}
+    return app.openapi()
 
 @app.post("/predict")
-def predict(request: PredictRequest):
+def predict(request: PredictRequest, token: str = Depends(verify_token)):
     predictions = []
-    for item in request.items:
+    for item in request.citations:
         pred = rct_clf.predict({
             "title": item.title,
             "abstract": item.abstract,
