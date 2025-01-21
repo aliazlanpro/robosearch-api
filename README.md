@@ -2,8 +2,6 @@
 
 A FastAPI-based service for classifying research papers as RCTs (Randomized Controlled Trials).
 
-## Overview
-
 This API application is based on [RobotSearch](https://github.com/ijmarshall/robotsearch), wrapping its core functionality into a API service.
 
 ## Features
@@ -114,11 +112,6 @@ curl -X POST "http://localhost:8000/predict" \
 ```
 
 ## Using RoboSearch as a Module
-
-### Installation
-```bash
-pip install robosearch
-```
 
 ### Basic Usage
 ```python

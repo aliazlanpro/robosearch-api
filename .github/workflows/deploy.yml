@@ -1,9 +1,8 @@
 name: Build Docker images
  
 on:
-  push:
-    branches: ["main"]
- 
+  workflow_dispatch:
+
 jobs:
   build-and-push-dockerfile-image:
     runs-on: ubuntu-latest
